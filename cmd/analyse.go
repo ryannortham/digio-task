@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -42,20 +39,10 @@ to quickly create a Cobra application.`,
 		}
 
 		// Print the file's contents as a string
-		fmt.Printf(string(contents))
+		fmt.Print(string(contents))
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(analyseCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// analyseCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// analyseCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

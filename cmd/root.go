@@ -13,13 +13,14 @@ var cfgFile string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "digio-task",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "Parses a log file containing HTTP requests and to reports on its contents",
+	Long: `Parses a log file containing HTTP requests and to reports on its contents
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	For a given log file we want to know:
+	- The number of unique IP addresses
+	- The top 3 most visited URLs
+	- The top 3 most active IP addresses
+`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -33,7 +34,7 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./config/config.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is: ./config/config.yaml)")
 }
 
 // initConfig reads in config file and ENV variables if set.

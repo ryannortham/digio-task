@@ -1,4 +1,6 @@
-# Programming Task
+# Digio Programming Task
+
+![digio logo](assets/images/digio-logo.svg)
 
 ## Overview
 
@@ -29,7 +31,7 @@ For a given log file we want to know:
 
 `177.71.128.21 - - [10/Jul/2018:22:21:28 +0200] "GET /intranet-analytics/ HTTP/1.1" 200 3574`
 
-A log file with test data is included with this assignment.
+A [log file with test data](assets/logs/programming-task-example-data.log) is included with this assignment.
 
 ## Deliverables
 
@@ -40,25 +42,26 @@ A log file with test data is included with this assignment.
 
 # Approach
 
-## Goals
-
-- [x] Make a configurable CLI based application using [Cobra](https://github.com/spf13/cobra) package
-- [x] Handle by configuration management using [Viper](https://github.com/spf13/viper) package.
-- [ ] Create a [Makefile](https://www.gnu.org/software/make/manual/make.html) to assist with common development tasks.
-- [ ] Handle data analytics with data frames using the [Gota](https://github.com/go-gota/gota) package
-- [ ] Make a log reader interface. Enable easy switching from file based logs, to api/database/... based logs at a later date if required.
-- [ ] Make a log parsing interface. Enable easy switching for different log sting formats if required.
-- [ ] Make data analysis functions work for any column in the log data. Make it easy to add additional analytics functions as required.
-- [ ] The solution should handle malformed log data gracefully.
-- [ ] Use table tests and [Testify](https://github.com/stretchr/testify) package for unit testing.
-- [ ] 90% test coverage
-
 ## Assumptions
 
 - The solution should be designed to be extensible, in order to handle additional scenarios beyond the initial given requirements.
-- We're not dealing with 'big data' here. 
+- We're not dealing with 'big data' here:
     - The log file is small enough to be completely stored in memory.
     - Processing in a single thread is sufficient for the performance requirements.
 - Concurrency/containerization is out of scope.
 - Log streaming/pagination is out of scope.
+- CI/CD is out of scope.
+- Mocking log file IO for unit testing is out of scope.
 
+## Goals
+
+- [x] Make a configurable CLI based application using Golang's [Cobra](https://github.com/spf13/cobra) package
+- [x] Handle by configuration management using the [Viper](https://github.com/spf13/viper) package.
+- [ ] Handle data analytics with data frames using the [Gota](https://github.com/go-gota/gota) package
+- [ ] Use table tests and [Testify](https://github.com/stretchr/testify) package for unit testing.
+- [ ] Create a [Makefile](https://www.gnu.org/software/make/manual/make.html) to assist with common development tasks.
+- [ ] Create a log reader interface. Enable easy switching from file based logs, to api/database/other based logs at a later date if required.
+- [ ] Create a log parsing interface. Enable easy switching for different log formats if required.
+- [ ] Make data analysis functions work for any column in the log data. Make it easy to add additional analytics functions as required.
+- [ ] The solution should handle malformed log data gracefully.
+- [ ] Achieve 90% unit test coverage.
