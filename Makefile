@@ -1,5 +1,7 @@
 # Name of the binary file to be generated
 BINARY_DIR=bin
+GOOS=$(shell go env GOOS)
+GOARCH=$(shell go env GOARCH)
 EXT=$(if $(filter windows,$(GOOS)),.exe,)
 BINARY_NAME=digio-task-$(GOOS)-$(GOARCH)$(EXT)
 

@@ -14,7 +14,7 @@ type FileReader struct {
 }
 
 // ReadLines reads a whole file into memory as a slice of strings.
-func (r FileReader) ReadLines() ([]string, error) {
+func (r *FileReader) ReadLines() ([]string, error) {
 	file, err := os.Open(r.Filename)
 	if err != nil {
 		return nil, err

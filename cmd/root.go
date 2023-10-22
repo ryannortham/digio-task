@@ -8,49 +8,61 @@ import (
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
-
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "digio-task",
 	Short: "Parses a log file containing HTTP requests and to reports on its contents",
-	Long: `Parses a log file containing HTTP requests and to reports on its contents
+	Long: `
+Parses a log file containing HTTP requests and to reports on its contents
 
-	For a given log file we want to know:
-	- The number of unique IP addresses
-	- The top 3 most visited URLs
-	- The top 3 most active IP addresses
+For a given log file we want to know:
+  - The number of unique IP addresses
+  - The top 3 most visited URLs
+  - The top 3 most active IP addresses
+
+
+         xxxxxx                                    $$$$$$   $$$$$$                          $$$$$$                      
+         xxxxxx       :                            $$$$$$   $$$$$$                          $$$$$$                      
+        xxxxxx    :::::                            $$$$$$   $$$$$$                          $$$$$$                      
+      xxxxxxxx  ::::::::                           $$$$$$                                                               
+  xxxxxxxxxxx ::::::::::   ++            $$$$$$$$$ $$$$$$   $$$$$$      $$$$$$$$$$ $$$$$$   $$$$$$       $$$$$$$$$$     
+xxxxxxxxxxx  ::::::::    +++++         $$$$$$$$$$$$$$$$$$   $$$$$$    $$$$$$$$$$$$$$$$$$$   $$$$$$    $$$$$$$$$$$$$$$$  
+xxxxxxxxx    ::::::     +++++++      $$$$$$$$$$$$$$$$$$$$   $$$$$$   $$$$$$$$$$$$$$$$$$$$   $$$$$$   $$$$$$$$$$$$$$$$$$ 
+xxxxxx      ::::::     ++++++++      $$$$$$       $$$$$$$   $$$$$$  $$$$$$$      $$$$$$$$   $$$$$$  $$$$$$$      $$$$$$$
+            ::::::    +++++++       $$$$$$         $$$$$$   $$$$$$  $$$$$$         $$$$$$   $$$$$$  $$$$$$        $$$$$$
+   ;;;      ::::::   +++++++        $$$$$$         $$$$$$   $$$$$$  $$$$$$         $$$$$$   $$$$$$  $$$$$          $$$$$
+ ;;;;;;     ::::::   ++++++         $$$$$$         $$$$$$   $$$$$$  $$$$$$        $$$$$$$   $$$$$$  $$$$$$        $$$$$$
+ ;;;;;;;;   ::::     ++++++          $$$$$$       $$$$$$$   $$$$$$   $$$$$$$$$ $$$$$$$$$$   $$$$$$  $$$$$$$      $$$$$$$
+  ;;;;;;;;;          ++++++          $$$$$$$$$$$$$$$$$$$$   $$$$$$   $$$$$$$$$$$$$$$$$$$$   $$$$$$   $$$$$$$$$$$$$$$$$$ 
+    ;;;;;;;;;;;;;;   +++++++           $$$$$$$$$$$$$$$$$$   $$$$$$     $$$$$$$$$$$$$$$$$$   $$$$$$    $$$$$$$$$$$$$$$$  
+     ;;;;;;;;;;;;;;   +++++              $$$$$$$$$ $$$$$$   $$$$$$        $$$$$$   $$$$$$   $$$$$$       $$$$$$$$$$$    
+        ;;;;;;;;;;;    +                                                $$$       $$$$$$                                
+                                                                      $$$$$$$$$$$$$$$$$$                                
+                                                                       $$$$$$$$$$$$$$$$                                 
+                                                                         $$$$$$$$$$$$                                   
+
+
 `,
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
+	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
 }
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is: ./config/config.yaml)")
 }
 
-// initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" {
+	viper.AddConfigPath("config")
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
 
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		viper.AddConfigPath("config")
-		viper.SetConfigType("yaml")
-		viper.SetConfigName("config")
+	if err := viper.ReadInConfig(); err != nil {
+		fmt.Printf("Error reading config file: %s", err)
 	}
 
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
-	}
+	fmt.Printf("Using config file: %s\n", viper.ConfigFileUsed())
 }
