@@ -28,36 +28,15 @@ For a given log file we want to know:
 - The top 3 most active IP addresses
 `,
 
-		Run: func(cmd *cobra.Command, args []string) {
-			// read the log file
-			logLines, err := logReader.ReadLines()
-			if err != nil {
-				fmt.Printf("Error reading log file: %v\n", err)
-				return
-			}
-
-			// parse the log file
-			logEntries, err := logParser.ParseLogEntries(logLines)
-			if err != nil {
-				fmt.Printf("Error parsing log file: %v\n", err)
-				return
-			}
-
-			// analyse the log file data
-			logAnalysis, err := logAnalyzer.GetLogAnalysis(logEntries)
-			if err != nil {
-				fmt.Printf("Error analysing log file: %v\n", err)
-				return
-			}
-
-			// print the results
-			ui.PrintAnalysisResults(logAnalysis)
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return Run(logReader, logParser, logAnalyzer)
 		},
 	}
 )
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
 }
@@ -69,6 +48,31 @@ func init() {
 	cobra.OnInitialize(initLogAnalyzer)
 }
 
+func Run(logReader log.LogReader, logParser log.LogParser, logAnalyzer log.LogAnalyzer) error {
+	// read the log file
+	logLines, err := logReader.ReadLines()
+	if err != nil {
+		return fmt.Errorf("error reading log file: %w", err)
+	}
+
+	// parse the log file
+	logEntries, err := logParser.ParseLogEntries(logLines)
+	if err != nil {
+		return fmt.Errorf("error parsing log file: %w", err)
+	}
+
+	// analyse the log file data
+	logAnalysis, err := logAnalyzer.GetLogAnalysis(logEntries)
+	if err != nil {
+		return fmt.Errorf("error analysing log file: %w", err)
+	}
+
+	// print the results
+	ui.PrintAnalysisResults(logAnalysis)
+
+	return nil
+}
+
 func initConfig() {
 	viper.AddConfigPath("config")
 	viper.SetConfigName("config")
@@ -76,6 +80,7 @@ func initConfig() {
 
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Printf("Error reading config file: %s", err)
+		os.Exit(1)
 	}
 }
 
