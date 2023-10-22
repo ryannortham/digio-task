@@ -55,6 +55,7 @@ A [log file with test data](assets/logs/programming-task-example-data.log) is in
 - Log streaming/pagination is out of scope.
 - CI/CD is out of scope.
 - Mocking log file IO for unit testing is out of scope.
+- I'm not going to worry about dealing with tied counts when assessing the 'top 3' of a log column. Max three results will be displayed, regardless of tied results. 
 
 ## Goals
 
@@ -62,9 +63,10 @@ A [log file with test data](assets/logs/programming-task-example-data.log) is in
 - [x] Handle by configuration management using the [Viper](https://github.com/spf13/viper) package.
 - [x] Create a [Makefile](https://www.gnu.org/software/make/manual/make.html) to assist with common development tasks.
 - [x] Handle data analytics with data frames using the [Gota](https://github.com/go-gota/gota) package
-- [ ] Use table tests and [Testify](https://github.com/stretchr/testify) package for unit testing.
 - [x] Create a log reader interface. Enable easy switching from file based logs, to api/database/other based logs at a later date if required.
-- [ ] Create a log parsing interface. Enable easy switching for different log formats if required.
-- [ ] Make data analysis functions work for any column in the log data. Make it easy to add additional analytics functions as required.
-- [ ] The solution should handle malformed log data gracefully.
+- [x] Create a log parsing interface. Enable easy switching for different log formats if required.
+- [x] Make data analysis functions work for any column in the log data. 
+- [x] Make it easy to add additional analytics functions as required.
+- [x] The solution should handle malformed log data gracefully.
+- [ ] Use table tests and [Testify](https://github.com/stretchr/testify) package for unit testing.
 - [ ] Achieve 90% unit test coverage.

@@ -6,62 +6,78 @@ import (
 	"github.com/go-gota/gota/dataframe"
 )
 
-type LogAnalyzer struct{}
-
 type LogAnalysis struct {
-	UniqueIPCount int
-	// top3MostVisitedURLs []string
-	// top3MostActiveIPs   []string
+	UniqueIPCount       int
+	Top3MostVisitedURLs [][]string
+	Top3MostActiveIPs   [][]string
 }
 
-func (l *LogAnalyzer) AnalyseLogEntries(logEntries []LogEntry) (LogAnalysis, error) {
+type LogAnalyzer interface {
+	GetLogAnalysis([]LogEntry) (*LogAnalysis, error)
+}
+
+type CombinedLogAnalyzer struct{}
+
+// GetLogAnalysis returns a LogAnalysis struct containing the results of the analysis
+func (l *CombinedLogAnalyzer) GetLogAnalysis(logEntries []LogEntry) (*LogAnalysis, error) {
 	df := dataframe.LoadStructs(logEntries)
 
-	// count the number of unique IP addresses in the log
-	uniqueIPs, err := l.getColumnSet(df, "IP")
+	IPGroups, err := aggregateDfByColumn(df, "IP")
 	if err != nil {
-		return LogAnalysis{}, fmt.Errorf("error getting unique IPs: %w", err)
+		return nil, err
 	}
 
-	result := LogAnalysis{
-		UniqueIPCount: len(uniqueIPs),
+	URLGroups, err := aggregateDfByColumn(df, "URL")
+	if err != nil {
+		return nil, err
 	}
 
-	return result, err
+	la := &LogAnalysis{
+		UniqueIPCount:       IPGroups.Nrow(),
+		Top3MostActiveIPs:   getTopNRows(IPGroups, 3).Records(),
+		Top3MostVisitedURLs: getTopNRows(URLGroups, 3).Records(),
+	}
+
+	return la, err
 }
 
-// getColumnSet returns a slice of unique values in a column
-func (l *LogAnalyzer) getColumnSet(df dataframe.DataFrame, colName string) ([]interface{}, error) {
-
-	// check that the column exists
+func aggregateDfByColumn(df dataframe.DataFrame, colName string) (*dataframe.DataFrame, error) {
 	if !columnExists(df, colName) {
 		return nil, fmt.Errorf("column %s does not exist", colName)
 	}
 
-	// get the unique values in the column using a map
-	var set []interface{}
-	setMap := make(map[interface{}]bool)
-	col := df.Col(colName)
+	// group the dataframe by the column and aggregate the count of each group
+	groupedDf := df.GroupBy(colName).Aggregation(
+		[]dataframe.AggregationType{dataframe.Aggregation_COUNT},
+		[]string{colName},
+	)
 
-	for _, val := range col.Records() {
-		if _, ok := setMap[val]; !ok {
-			setMap[val] = true
-			set = append(set, val)
-		}
-	}
-
-	return set, nil
+	return &groupedDf, nil
 }
 
-// check that a column exists in a dataframe
-func columnExists(df dataframe.DataFrame, colName string) bool {
-	colNames := df.Names()
+func getTopNRows(df *dataframe.DataFrame, n int) dataframe.DataFrame {
+	// sort the dataframe by the count column
+	sortedDf := df.Arrange(dataframe.RevSort(df.Names()[1]))
 
-	for _, name := range colNames {
+	indices := make([]int, n)
+	for i := range indices {
+		// skip the first row as it is the header
+		if i == 0 {
+			continue
+		}
+
+		indices[i] = i
+	}
+
+	return sortedDf.Subset(indices)
+}
+
+// checks that a column exists in a dataframe
+func columnExists(df dataframe.DataFrame, colName string) bool {
+	for _, name := range df.Names() {
 		if name == colName {
 			return true
 		}
 	}
-
 	return false
 }

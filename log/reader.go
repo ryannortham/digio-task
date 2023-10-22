@@ -10,12 +10,12 @@ type LogReader interface {
 }
 
 type FileReader struct {
-	Filename string
+	LogFilePath string
 }
 
 // ReadLines reads a whole file into memory as a slice of strings.
 func (r *FileReader) ReadLines() ([]string, error) {
-	file, err := os.Open(r.Filename)
+	file, err := os.Open(r.LogFilePath)
 	if err != nil {
 		return nil, err
 	}
