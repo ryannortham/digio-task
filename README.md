@@ -44,6 +44,9 @@ A [log file with test data](assets/logs/programming-task-example-data.log) is in
 
 ## Assumptions
 
+- The provided logs are in [combined log format.](https://httpd.apache.org/docs/2.2/logs.html#combined)
+- Any log data positioned after the user agent field is irrelevant, and can be discarded.
+- Log data is trusted to be in a valid format, and does not require validation during run time.
 - The solution should be designed to be extensible, in order to handle additional scenarios beyond the initial given requirements.
 - We're not dealing with 'big data' here:
     - The log file is small enough to be completely stored in memory.
@@ -57,10 +60,10 @@ A [log file with test data](assets/logs/programming-task-example-data.log) is in
 
 - [x] Make a configurable CLI based application using Golang's [Cobra](https://github.com/spf13/cobra) package
 - [x] Handle by configuration management using the [Viper](https://github.com/spf13/viper) package.
-- [ ] Handle data analytics with data frames using the [Gota](https://github.com/go-gota/gota) package
+- [x] Create a [Makefile](https://www.gnu.org/software/make/manual/make.html) to assist with common development tasks.
+- [x] Handle data analytics with data frames using the [Gota](https://github.com/go-gota/gota) package
 - [ ] Use table tests and [Testify](https://github.com/stretchr/testify) package for unit testing.
-- [ ] Create a [Makefile](https://www.gnu.org/software/make/manual/make.html) to assist with common development tasks.
-- [ ] Create a log reader interface. Enable easy switching from file based logs, to api/database/other based logs at a later date if required.
+- [x] Create a log reader interface. Enable easy switching from file based logs, to api/database/other based logs at a later date if required.
 - [ ] Create a log parsing interface. Enable easy switching for different log formats if required.
 - [ ] Make data analysis functions work for any column in the log data. Make it easy to add additional analytics functions as required.
 - [ ] The solution should handle malformed log data gracefully.

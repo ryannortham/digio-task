@@ -1,20 +1,18 @@
 # Name of the binary file to be generated
-BINARY_NAME=digio-task.exe
-
-# Lint parameters
-LINTCMD=golangci-lint
-LINTCMDARGS=run
+BINARY_DIR=bin
+EXT=$(if $(filter windows,$(GOOS)),.exe,)
+BINARY_NAME=digio-task-$(GOOS)-$(GOARCH)$(EXT)
 
 all: tidy fmt lint test build
 
 build:
-	go build -o $(BINARY_NAME) -v .
+	go build -o $(BINARY_DIR)/$(BINARY_NAME) -v .
 
 test: lint
 	go test -v ./...
 
 lint:
-	$(LINTCMD) $(LINTCMDARGS)
+	golangci-lint run
 
 clean:
 	go clean
@@ -26,4 +24,4 @@ fmt:
 	go fmt ./...
 
 run: build
-	./$(BINARY_NAME) analyse
+	./$(BINARY_DIR)/$(BINARY_NAME) analyselog
