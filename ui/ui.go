@@ -17,10 +17,10 @@ func PrintAnalysisResults(logAnalysis *log.LogAnalysis) {
 
 	fmt.Printf("Unique IP addresses: %d\n\n", logAnalysis.UniqueIPCount)
 
-	fmt.Println("Top 3 most visited URLs:")
+	fmt.Printf("Top %d most visited URLs:\n", viper.GetInt("top-n"))
 	printTable(logAnalysis.TopNMostVisitedURLs)
 
-	fmt.Println("Top 3 most active IPs:")
+	fmt.Printf("Top %d most active IPs:\n", viper.GetInt("top-n"))
 	printTable(logAnalysis.TopNMostActiveIPs)
 }
 
