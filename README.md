@@ -68,5 +68,5 @@ A [log file with test data](assets/logs/programming-task-example-data.log) is in
 - [x] Make data analysis functions work for any column in the log data. 
 - [x] Make it easy to add additional analytics functions as required.
 - [x] The solution should handle malformed log data gracefully.
-- [ ] Use table tests and [Testify](https://github.com/stretchr/testify) package for unit testing.
-- [ ] Achieve 90% unit test coverage.
+- [x] Use table tests and [Testify](https://github.com/stretchr/testify) package for unit testing.
+- [x] Achieve 90% unit test coverage.
