@@ -8,19 +8,22 @@ import (
 
 type LogAnalysis struct {
 	UniqueIPCount       int
-	Top3MostVisitedURLs [][]string
-	Top3MostActiveIPs   [][]string
+	TopNMostVisitedURLs [][]string
+	TopNMostActiveIPs   [][]string
 }
 
 type LogAnalyzer interface {
-	GetLogAnalysis([]LogEntry) (*LogAnalysis, error)
+	GetLogAnalysis([]LogEntry, int) (*LogAnalysis, error)
 }
 
 type CombinedLogAnalyzer struct{}
 
 // GetLogAnalysis returns a LogAnalysis struct containing the results of the analysis
-func (l *CombinedLogAnalyzer) GetLogAnalysis(logEntries []LogEntry) (*LogAnalysis, error) {
+func (l *CombinedLogAnalyzer) GetLogAnalysis(logEntries []LogEntry, topN int) (*LogAnalysis, error) {
 	df := dataframe.LoadStructs(logEntries)
+	if df.Err != nil {
+		return nil, df.Err
+	}
 
 	IPGroups, err := aggregateDfByColumn(df, "IP")
 	if err != nil {
@@ -32,13 +35,23 @@ func (l *CombinedLogAnalyzer) GetLogAnalysis(logEntries []LogEntry) (*LogAnalysi
 		return nil, err
 	}
 
-	la := &LogAnalysis{
-		UniqueIPCount:       IPGroups.Nrow(),
-		Top3MostActiveIPs:   getTopNRows(IPGroups, 3).Records(),
-		Top3MostVisitedURLs: getTopNRows(URLGroups, 3).Records(),
+	topActiveIPs, err := getTopNRows(IPGroups, topN)
+	if err != nil {
+		return nil, err
 	}
 
-	return la, err
+	topVisitedURLs, err := getTopNRows(URLGroups, topN)
+	if err != nil {
+		return nil, err
+	}
+
+	la := &LogAnalysis{
+		UniqueIPCount:       IPGroups.Nrow(),
+		TopNMostActiveIPs:   topActiveIPs.Records(),
+		TopNMostVisitedURLs: topVisitedURLs.Records(),
+	}
+
+	return la, nil
 }
 
 func aggregateDfByColumn(df dataframe.DataFrame, colName string) (*dataframe.DataFrame, error) {
@@ -52,12 +65,19 @@ func aggregateDfByColumn(df dataframe.DataFrame, colName string) (*dataframe.Dat
 		[]string{colName},
 	)
 
+	// sort the dataframe to make output deterministic
+	groupedDf = groupedDf.Arrange(dataframe.Sort(colName))
+
 	return &groupedDf, nil
 }
 
-func getTopNRows(df *dataframe.DataFrame, n int) dataframe.DataFrame {
-	// sort the dataframe by the count column
-	sortedDf := df.Arrange(dataframe.RevSort(df.Names()[1]))
+func getTopNRows(df *dataframe.DataFrame, n int) (dataframe.DataFrame, error) {
+	if n > df.Nrow() {
+		return dataframe.DataFrame{}, fmt.Errorf("n is greater than the number of rows in the dataframe")
+	}
+
+	// sort the dataframe by the count column then name column
+	sortedDf := df.Arrange(dataframe.Sort(df.Names()[0])).Arrange(dataframe.RevSort(df.Names()[1]))
 
 	indices := make([]int, n)
 	for i := range indices {
@@ -69,7 +89,7 @@ func getTopNRows(df *dataframe.DataFrame, n int) dataframe.DataFrame {
 		indices[i] = i
 	}
 
-	return sortedDf.Subset(indices)
+	return sortedDf.Subset(indices), nil
 }
 
 // checks that a column exists in a dataframe

@@ -33,12 +33,22 @@ func (p *CombinedLogParser) ParseLogEntry(line string) (LogEntry, error) {
 	clfRegex := regexp.MustCompile(clfRgx)
 	logFields := clfRegex.FindStringSubmatch(line)
 
-	// parse error
+	// regex parse error
 	if logFields == nil {
 		return LogEntry{}, fmt.Errorf("log parsing error for line: %s", line)
 	}
 
 	// log parsed successfully
+	statusCode, err := ParseInt(logFields[8])
+	if err != nil {
+		return LogEntry{}, err
+	}
+
+	size, err := ParseInt(logFields[9])
+	if err != nil {
+		return LogEntry{}, err
+	}
+
 	logEntry := LogEntry{
 		IP:         logFields[1],
 		Identity:   logFields[2],
@@ -47,8 +57,8 @@ func (p *CombinedLogParser) ParseLogEntry(line string) (LogEntry, error) {
 		Method:     logFields[5],
 		URL:        logFields[6],
 		Protocol:   logFields[7],
-		StatusCode: ParseInt(logFields[8]),
-		Size:       ParseInt(logFields[9]),
+		StatusCode: statusCode,
+		Size:       size,
 		Referrer:   logFields[10],
 		UserAgent:  logFields[11],
 	}
@@ -76,19 +86,18 @@ func (p *CombinedLogParser) ParseLogEntries(logLines []string) ([]LogEntry, erro
 	return logEntries, nil
 }
 
-func ParseInt(str string) int {
+func ParseInt(str string) (int, error) {
 	i, err := strconv.Atoi(str)
 	if err != nil {
-		// try parsing as a float
+		// str could be an int will trailing zero decimal places, try parsing as float
 		f, err := strconv.ParseFloat(str, 64)
 		if err != nil {
-			fmt.Printf("error parsing int: %v\n", err)
-			return -1
+			return 0, fmt.Errorf("error parsing int: %v", err)
 		}
 
-		// convert float to int
+		// truncate decimal places by casting to int
 		i = int(f)
 	}
 
-	return i
+	return i, nil
 }

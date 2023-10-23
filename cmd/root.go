@@ -62,7 +62,7 @@ func Run(logReader log.LogReader, logParser log.LogParser, logAnalyzer log.LogAn
 	}
 
 	// analyse the log file data
-	logAnalysis, err := logAnalyzer.GetLogAnalysis(logEntries)
+	logAnalysis, err := logAnalyzer.GetLogAnalysis(logEntries, viper.GetInt("top-n"))
 	if err != nil {
 		return fmt.Errorf("error analysing log file: %w", err)
 	}

@@ -2,3 +2,4 @@ log-dir: .\assets\logs
 log-file: programming-task-example-data.log
 log-format: combined-log-format
 log-source: file
+top-n: 3

@@ -11,7 +11,7 @@ build:
 	go build -o $(BINARY_DIR)/$(BINARY_NAME) -v .
 
 test: lint
-	go test -v ./...
+	go test -v -cover ./...
 
 lint:
 	golangci-lint run

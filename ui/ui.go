@@ -18,10 +18,10 @@ func PrintAnalysisResults(logAnalysis *log.LogAnalysis) {
 	fmt.Printf("Unique IP addresses: %d\n\n", logAnalysis.UniqueIPCount)
 
 	fmt.Println("Top 3 most visited URLs:")
-	printTable(logAnalysis.Top3MostVisitedURLs)
+	printTable(logAnalysis.TopNMostVisitedURLs)
 
 	fmt.Println("Top 3 most active IPs:")
-	printTable(logAnalysis.Top3MostActiveIPs)
+	printTable(logAnalysis.TopNMostActiveIPs)
 }
 
 func printTable(results [][]string) {
@@ -35,13 +35,20 @@ func printTable(results [][]string) {
 			continue
 		}
 
-		tbl.AddRow(row[0], log.ParseInt(row[1]))
+		count, err := log.ParseInt(row[1])
+		if err != nil {
+			// this should never happen
+			fmt.Printf("error parsing count: %v\n", err)
+		}
+
+		tbl.AddRow(row[0], count)
 	}
 
 	tbl.Print()
 	fmt.Println()
 }
 
+// printDigioLogo prints the Digio logo with colors.
 func printDigioLogo() {
 	const digioLogo = `
     

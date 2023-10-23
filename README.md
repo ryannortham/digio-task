@@ -46,8 +46,9 @@ A [log file with test data](assets/logs/programming-task-example-data.log) is in
 
 - The provided logs are in [combined log format.](https://httpd.apache.org/docs/2.2/logs.html#combined)
 - Any log data positioned after the user agent field is irrelevant, and can be discarded.
-- Log data is trusted to be in a valid format, and does not require validation during run time.
+- Log data is trusted to be in a valid format. Log fields require minimal validation during run time.
 - The solution should be designed to be extensible, in order to handle additional scenarios beyond the initial given requirements.
+- Max three 'top' results will be displayed, regardless of tied results. Solution can be extended later to handle this scenario when business rules are defined.
 - We're not dealing with 'big data' here:
     - The log file is small enough to be completely stored in memory.
     - Processing in a single thread is sufficient for the performance requirements.
@@ -55,7 +56,6 @@ A [log file with test data](assets/logs/programming-task-example-data.log) is in
 - Log streaming/pagination is out of scope.
 - CI/CD is out of scope.
 - Mocking log file IO for unit testing is out of scope.
-- I'm not going to worry about dealing with tied counts when assessing the 'top 3' of a log column. Max three results will be displayed, regardless of tied results. 
 
 ## Goals
 
