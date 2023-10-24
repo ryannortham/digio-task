@@ -55,7 +55,6 @@ A [log file with test data](assets/logs/programming-task-example-data.log) is in
 - Concurrency/containerization is out of scope.
 - Log streaming/pagination is out of scope.
 - CI/CD is out of scope.
-- Mocking log file IO for unit testing is out of scope.
 
 ## Goals
 
