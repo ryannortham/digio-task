@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/ryannortham/digio-task/log"
-	"github.com/ryannortham/digio-task/ui"
+	"github.com/ryannortham/digio-task/render"
 )
 
 var (
@@ -68,7 +68,7 @@ func Run(logReader log.LogReader, logParser log.LogParser, logAnalyzer log.LogAn
 	}
 
 	// print the results
-	ui.PrintAnalysisResults(logAnalysis)
+	render.PrintAnalysisResults(logAnalysis)
 
 	return nil
 }

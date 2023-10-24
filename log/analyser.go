@@ -75,8 +75,8 @@ func getTopNRows(df *dataframe.DataFrame, n int) (dataframe.DataFrame, error) {
 		return dataframe.DataFrame{}, fmt.Errorf("n is greater than the number of rows in the dataframe")
 	}
 
-	// sort the dataframe by the count column then name column
-	sortedDf := df.Arrange(dataframe.Sort(df.Names()[0])).Arrange(dataframe.RevSort(df.Names()[1]))
+	// sort the dataframe by the count column
+	sortedDf := df.Arrange(dataframe.RevSort(df.Names()[1]))
 
 	indices := make([]int, n)
 	for i := range indices {
