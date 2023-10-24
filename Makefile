@@ -26,4 +26,4 @@ fmt:
 	go fmt ./...
 
 run: build
-	./$(BINARY_DIR)/$(BINARY_NAME) analyselog
+	./$(BINARY_DIR)/$(BINARY_NAME)
