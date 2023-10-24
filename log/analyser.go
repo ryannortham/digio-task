@@ -18,7 +18,6 @@ type LogAnalyzer interface {
 
 type CombinedLogAnalyzer struct{}
 
-// GetLogAnalysis returns a LogAnalysis struct containing the results of the analysis
 func (l *CombinedLogAnalyzer) GetLogAnalysis(logEntries []LogEntry, topN int) (*LogAnalysis, error) {
 	df := dataframe.LoadStructs(logEntries)
 	if df.Err != nil {
